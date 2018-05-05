@@ -42,22 +42,32 @@ func main() {
 			Usage: "Use a specific server",
 		},
 		cli.StringFlag{
-			Name:  "influxUsername, iu",
+			Name:  "influxUsername, u",
 			Usage: "The username for the influxDB instance",
 		},
 		cli.StringFlag{
-			Name:  "influxPasword, ip",
+			Name:  "influxPasword, p",
 			Usage: "The password for the influxDB instance",
 		},
 		cli.StringFlag{
-			Name:  "influxDB, idb",
+			Name:  "influxDB, db",
 			Usage: "The name for the influxDB database",
+		},
+		cli.StringFlag{
+			Name:  "influxURL, url",
+			Value: "http://localhost:8086",
+			Usage: "The name for the influxDB database",
+		},
+		cli.IntFlag{
+			Name:  "interval, i",
+			Value: 20,
+			Usage: "The amount of time in minutes to wait between speedtest runs",
 		},
 	}
 
 	// toggle our switches and setup variables
 	app.Action = func(c *cli.Context) {
-		db, err := influxDBClient(c.String("influxUsername"), c.String("influxPassword"))
+		db, err := influxDBClient(c.String("influxURL"), c.String("influxUsername"), c.String("influxPassword"))
 		if err != nil {
 			log.Printf("error connecting to influxdb: %v", err)
 		}
@@ -80,12 +90,12 @@ func main() {
 					log.Printf("error writing to influxdb: %v", err)
 				}
 
-				log.Printf("writing speedtest results {server: %s, ping: %3.2fms, download: %3.2fMbps, upload: %3.2fMbps} to influxdb", res.server.Name, *res.latency, *res.download, *res.upload)
+				log.Printf("writing speedtest results {server: %s, ping: %3.2fms, download: %3.2fMbps, upload: %3.2fMbps} to influxdb", res.server.Sponsor, *res.latency, *res.download, *res.upload)
 			} else {
 				log.Printf("speedtest results have no values, skipping writing to influxdb")
 			}
 
-			<-time.After(1 * time.Minute)
+			<-time.After(time.Duration(c.Int("interval")) * time.Minute)
 		}
 	}
 
@@ -119,9 +129,9 @@ func runSpeedtest(c *cli.Context, client *speedtest.Client) (results, error) {
 	}, nil
 }
 
-func influxDBClient(username string, password string) (client.Client, error) {
+func influxDBClient(url string, username string, password string) (client.Client, error) {
 	c, err := client.NewHTTPClient(client.HTTPConfig{
-		Addr:     "http://localhost:8086",
+		Addr:     url,
 		Username: username,
 		Password: password,
 	})
@@ -144,7 +154,8 @@ func writeMetrics(c client.Client, database string, res results) error {
 		"server_name":    res.server.Name,
 		"server_id":      res.server.ID,
 		"server_sponsor": res.server.Sponsor,
-		"server_url":     res.server.Name,
+		"server_url":     res.server.URL,
+		"server_country": res.server.Country,
 	}
 
 	fields := map[string]interface{}{

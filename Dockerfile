@@ -5,4 +5,4 @@ RUN go build -o app .
 
 FROM gcr.io/distroless/base
 COPY --from=build /go/src/github.com/kylegrantlucas/speedtest-to-influxdb /
-CMD ["/app"]
+ENTRYPOINT ["/app"]

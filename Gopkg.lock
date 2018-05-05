@@ -18,6 +18,18 @@
   version = "v1.5.2"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/kylegrantlucas/speedtest"
+  packages = [
+    ".",
+    "coords",
+    "http",
+    "util",
+    "xml"
+  ]
+  revision = "f8512f58e7ead921fded157e7fc4261a694679f5"
+
+[[projects]]
   name = "github.com/urfave/cli"
   packages = ["."]
   revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
@@ -26,6 +38,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ffaf27e61ab2bf99042f5c51f4fc3cbdeffeafd31c42cc84e2969c674681d95c"
+  inputs-digest = "202e033cbdb51d233e4af9fae0a4d2a8249bfcef70bc6be838f341c9967bdccc"
   solver-name = "gps-cdcl"
   solver-version = 1
