@@ -19,10 +19,10 @@
 #   name = "github.com/x/y"
 #   version = "2.4.0"
 #
-# [prune]
-#   non-go = false
-#   go-tests = true
-#   unused-packages = true
+[prune]
+  non-go = true
+  go-tests = true
+  unused-packages = true
 
 [[constraint]]
   name = "github.com/influxdata/influxdb"
@@ -32,6 +32,6 @@
   name = "github.com/urfave/cli"
   version = "1.20.0"
 
-[prune]
-  go-tests = true
-  unused-packages = true
+[[constraint]]
+  name = "github.com/kylegrantlucas/speedtest"
+  branch = "master"
